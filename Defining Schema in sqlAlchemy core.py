@@ -22,3 +22,11 @@ print('-------------')
 
 for t in metadata.sorted_tables:
     print(t.name)
+
+print(posts.columns)         # return a list of columns
+print(posts.c)               # same as posts.columns
+print(posts.foreign_keys)    # returns a set containing foreign keys on the table
+print(posts.primary_key)     # returns the primary key of the column
+print(posts.metadata)        # get the MetaData object from the table
+print(posts.columns.post_title.name)     # returns the name of the column
+print(posts.columns.post_title.type)     # returns the type of the column
