@@ -290,3 +290,16 @@ str(s)
 r = conn.execute(s)
 r.fetchall()
 
+s = select([items]).\
+    where(items.c.cost_price + items.c.selling_price > 50).\
+    where(items.c.quantity > 10)
+print(s)
+
+
+s = select([items]).\
+where(
+    (items.c.cost_price > 200 ) |
+    (items.c.quantity < 5)
+)
+print(s)
+conn.execute(s).fetchall()
