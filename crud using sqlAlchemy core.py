@@ -565,3 +565,126 @@ s = select(c).group_by(customers.c.town)
 
 print(s)
 conn.execute(s).fetchall()
+
+
+from sqlalchemy.sql import func
+
+c = [
+    func.count("*").label('count'),
+    customers.c.town
+]
+
+s = select(c).group_by(customers.c.town).having(func.count("*") > 2)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Join operation
+print(customers.join(orders))
+
+print(customers.join(items,
+                 customers.c.address.like(customers.c.first_name + '%')
+             )
+)
+
+s = select([
+    customers.c.id,
+    customers.c.first_name
+]).select_from(
+    customers
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+s = select([
+            orders.c.id,
+            orders.c.date_placed
+]).select_from(
+    orders.join(customers)
+).where(
+    and_(
+        customers.c.first_name == "John",
+        customers.c.last_name == "Green",
+    )
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+s = select([
+    orders.c.id.label('order_id'),
+    orders.c.date_placed,
+    order_lines.c.quantity,
+    items.c.name,
+
+]).select_from(
+    orders.join(customers).join(order_lines).join(items)
+).where(
+    and_(
+        customers.c.first_name == "John",
+        customers.c.last_name == "Green",
+    )
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+s = select([
+    customers.c.first_name,
+    orders.c.id,
+]).select_from(
+    customers.outerjoin(orders)
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+s = select([
+    customers.c.first_name,
+    orders.c.id,
+]).select_from(
+    orders.outerjoin(customers)
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+
+s = select([
+    customers.c.first_name,
+    orders.c.id,
+]).select_from(
+    orders.outerjoin(customers, full=True)
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Updating records
+from sqlalchemy import update
+
+s = update(items).where(
+    items.c.name == 'Water Bottle'
+).values(
+    selling_price = 30,
+    quantity = 60,
+)
+
+print(s)
+rs = conn.execute(s)
+rs.rowcount  # count of rows updated
