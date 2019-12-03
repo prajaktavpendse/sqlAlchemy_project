@@ -363,3 +363,11 @@ s = select([orders]).where(
 )
 print(s)
 conn.execute(s).fetchall()
+
+#Not null operation
+
+s = select([orders]).where(
+    orders.c.date_shipped != None
+)
+print(s)
+conn.execute(s).fetchall()
