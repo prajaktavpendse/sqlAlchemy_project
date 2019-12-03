@@ -303,3 +303,18 @@ where(
 )
 print(s)
 conn.execute(s).fetchall()
+
+s = select([items]).\
+where(
+    ~(items.c.quantity == 50)
+)
+print(s)
+conn.execute(s).fetchall()
+
+s = select([items]).\
+where(
+    ~(items.c.quantity == 50) &
+    (items.c.cost_price < 20)
+)
+print(s)
+conn.execute(s).fetchall()
