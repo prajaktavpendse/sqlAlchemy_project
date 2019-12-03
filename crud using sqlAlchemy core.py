@@ -237,3 +237,11 @@ print(r.rowcount)
 
 s = customers.select()
 print(str(s))
+
+
+from sqlalchemy import select
+s = select([customers])
+print(str(s))
+
+r = conn.execute(s)
+print(r.fetchall())
