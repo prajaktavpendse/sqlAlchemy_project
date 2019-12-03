@@ -8,7 +8,7 @@ from datetime import datetime
 
 metadata = MetaData()
 
-engine = create_engine("postgres+psycopg2://postgres:pass@localhost/sqlalchemy_tuts")
+engine = create_engine("sqlite:///sqlalchemy_tuts.db")
 
 customers = Table('customers', metadata,
     Column('id', Integer(), primary_key=True),
@@ -50,3 +50,14 @@ order_lines = Table('order_lines', metadata,
 
 
 metadata.create_all(engine)
+
+ins = customers.insert().values(
+    first_name = 'John',
+    last_name = 'Green',
+    username = 'johngreen',
+    email = 'johngreen@mail.com',
+    address = '164 Hidden Valley Road',
+    town = 'Norfolk'
+)
+
+str(ins)
