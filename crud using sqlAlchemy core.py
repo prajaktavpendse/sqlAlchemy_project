@@ -872,3 +872,9 @@ def dispatch_order(order_id):
         print(e)
         t.rollback()
         print("Transaction failed.")
+
+        dispatch_order(1)
+
+        dispatch_order(2)
+
+        metadata.drop_all(engine)
