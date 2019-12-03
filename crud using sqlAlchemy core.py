@@ -743,3 +743,47 @@ print(s)
 rs = conn.execute(s)
 rs.keys()
 rs.fetchall()
+
+#Unions
+from sqlalchemy import union
+
+s = union(
+    select([items.c.id, items.c.name]).where(items.c.name.like("Wa%")),
+    select([items.c.id, items.c.name]).where(items.c.name.like("%e%")),
+).order_by(desc("id"))
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+from sqlalchemy import union_all
+
+s = union_all(
+    select([items.c.id, items.c.name]).where(items.c.name.like("Wa%")),
+    select([items.c.id, items.c.name]).where(items.c.name.like("%e%")),
+).order_by(desc("id"))
+
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Cretating subqueries
+s = select([items.c.id, items.c.name]).where(
+    items.c.id.in_(
+        select([order_lines.c.item_id]).select_from(customers.join(orders).join(order_lines)).where(
+                and_(
+                    customers.c.first_name == 'John',
+                    customers.c.last_name == 'Green',
+                    orders.c.id == 1
+                )
+        )
+    )
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
