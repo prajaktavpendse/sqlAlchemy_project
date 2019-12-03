@@ -257,3 +257,15 @@ s = select([customers])
 r = conn.execute(s)
 print(r.fetchone())
 print(r.fetchone())
+r = conn.execute(s)
+r.fetchmany(3)
+r.fetchmany(5)
+
+
+r = conn.execute(s)
+print(r.first())
+
+r = conn.execute(s)
+print(r.rowcount)
+
+print(r.keys())
