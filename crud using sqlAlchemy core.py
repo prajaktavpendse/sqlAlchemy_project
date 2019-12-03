@@ -371,3 +371,197 @@ s = select([orders]).where(
 )
 print(s)
 conn.execute(s).fetchall()
+
+#IN Operation
+
+s = select([customers]).where(
+    customers.c.first_name.in_(["Sarah", "John"])
+)
+print(s)
+conn.execute(s).fetchall()
+
+#Used NOT IN Operation
+
+s = select([customers]).where(
+    customers.c.first_name.notin_(["Sarah", "John"])
+)
+print(s)
+conn.execute(s).fetchall()
+
+#Using BETWEEN Operation
+
+s = select([items]).where(
+    items.c.cost_price.between(10, 20)
+)
+print(s)
+conn.execute(s).fetchall()
+
+#Using NOT BETWEEN operation
+
+s = select([items]).where(
+    not_(items.c.cost_price.between(10, 20))
+)
+print(s)
+conn.execute(s).fetchall()
+
+#Using LIKE Operation
+
+s = select([items]).where(
+    items.c.name.like("Wa%")
+)
+print(s)
+conn.execute(s).fetchall()
+
+s = select([items]).where(
+    items.c.name.ilike("wa%")
+)
+print(s)
+conn.execute(s).fetchall()
+
+#NOT LIKE
+s = select([items]).where(
+    not_(items.c.name.like("wa%"))
+)
+print(s)
+conn.execute(s).fetchall()
+
+#Ordering result
+
+s = select([items]).where(
+    items.c.quantity > 10
+).order_by(items.c.cost_price)
+print(s)
+conn.execute(s).fetchall()
+
+
+from sqlalchemy import desc
+
+s = select([items]).where(
+    items.c.quantity > 10
+).order_by(desc(items.c.cost_price))
+
+print(s)
+conn.execute(s).fetchall()
+
+s = select([items]).order_by(
+    items.c.quantity,
+    desc(items.c.cost_price)
+)
+print(s)
+conn.execute(s).fetchall()
+
+#Limiting results
+s = select([items]).order_by(
+    items.c.quantity
+).limit(2)
+
+print(s)
+conn.execute(s).fetchall()
+
+
+s = select([items]).order_by(
+    items.c.quantity
+).limit(2).offset(2)
+
+print(s)
+conn.execute(s).fetchall()
+
+#Limiting columns
+s = select([items.c.name, items.c.quantity]).where(
+    items.c.quantity ==  50
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+s = select([items.c.name, items.c.quantity, items.c.selling_price * 5 ]).where(
+    items.c.quantity ==  50
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+s = select([
+        items.c.name,
+        items.c.quantity,
+        (items.c.selling_price * 5).label('price')
+    ]).where(
+    items.c.quantity ==  50
+)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Accessing built-in functions
+
+
+from sqlalchemy.sql import func
+
+c = [
+
+    ##  date/time functions  ##
+
+    func.timeofday(),
+    func.localtime(),
+    func.current_timestamp(),
+    func.date_part("month", func.now()),
+    func.now(),
+
+    ##  mathematical functions  ##
+
+    func.pow(4, 2),
+    func.sqrt(441),
+    func.pi(),
+    func.floor(func.pi()),
+    func.ceil(func.pi()),
+
+    ##  string functions  ##
+
+    func.lower("ABC"),
+    func.upper("abc"),
+    func.length("abc"),
+    func.trim("  ab c  "),
+    func.chr(65),
+]
+
+s = select(c)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+from sqlalchemy.sql import func
+
+c = [
+    func.sum(items.c.quantity),
+    func.avg(items.c.quantity),
+    func.max(items.c.quantity),
+    func.min(items.c.quantity),
+    func.count(customers.c.id),
+]
+
+s = select(c)
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Grouping results
+
+from sqlalchemy.sql import func
+
+c = [
+    func.count("*").label('count'),
+    customers.c.town
+]
+
+s = select(c).group_by(customers.c.town)
+
+print(s)
+conn.execute(s).fetchall()
