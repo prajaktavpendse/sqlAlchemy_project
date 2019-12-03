@@ -318,3 +318,41 @@ where(
 )
 print(s)
 conn.execute(s).fetchall()
+
+#Using conjunctions
+from sqlalchemy import and_, or_, not_
+
+
+s = select([items]).\
+where(
+    and_(
+        items.c.quantity >= 50,
+        items.c.cost_price < 100,
+    )
+)
+print(s)
+conn.execute(s).fetchall()
+
+
+s = select([items]).\
+where(
+    or_(
+        items.c.quantity >= 50,
+        items.c.cost_price < 100,
+    )
+)
+print(s)
+conn.execute(s).fetchall()
+
+s = select([items]).\
+where(
+    and_(
+        items.c.quantity >= 50,
+        items.c.cost_price < 100,
+        not_(
+            items.c.name == 'Headphone'
+        ),
+    )
+)
+print(s)
+conn.execute(s).fetchall()
