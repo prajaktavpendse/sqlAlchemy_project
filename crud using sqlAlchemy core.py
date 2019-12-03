@@ -245,3 +245,15 @@ print(str(s))
 
 r = conn.execute(s)
 print(r.fetchall())
+
+
+rs = conn.execute(s)
+for row in rs:
+    print(row)
+
+s = select([customers])
+
+
+r = conn.execute(s)
+print(r.fetchone())
+print(r.fetchone())
