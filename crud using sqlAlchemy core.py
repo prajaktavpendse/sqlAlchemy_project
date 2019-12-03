@@ -688,3 +688,58 @@ s = update(items).where(
 print(s)
 rs = conn.execute(s)
 rs.rowcount  # count of rows updated
+
+#Deleting records
+from sqlalchemy import delete
+
+s = delete(customers).where(
+    customers.c.username.like('pablo%')
+)
+
+print(s)
+rs = conn.execute(s)
+rs.rowcount
+
+#Dealing with duplicates
+
+# without DISTINCT
+
+s = select([customers.c.town]).where(customers.c.id  < 10)
+print(s)
+rs = conn.execute(s)
+rs.fetchall()
+
+
+# with DISTINCT
+
+s = select([customers.c.town]).where(customers.c.id  < 10).distinct()
+print(s)
+rs = conn.execute(s)
+rs.fetchall()
+
+
+from sqlalchemy import distinct
+
+s = select([
+    func.count(distinct(customers.c.town)),
+    func.count(customers.c.town)
+])
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Casting
+from sqlalchemy import cast, Date
+
+s = select([
+    cast(func.pi(), Integer),
+    cast(func.pi(), Numeric(10,2)),
+    cast("2010-12-01", DateTime),
+    cast("2010-12-01", Date),
+])
+
+print(s)
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
