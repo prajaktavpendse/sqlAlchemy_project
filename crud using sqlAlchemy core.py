@@ -64,3 +64,39 @@ print(str(ins))
 
 print(ins.compile().params)
 
+conn = engine.connect()
+print(conn)
+r = conn.execute(ins)
+print(r)
+
+
+r.inserted_primary_key
+print(type(r.inserted_primary_key))
+
+# metadata.drop_all(engine)
+
+from sqlalchemy import insert
+
+ins = insert(customers).values(
+    first_name = 'Katherine',
+    last_name = 'Wilson',
+    username = 'katwilson',
+    email = 'katwilson@gmail.com',
+    address = '4685 West Side Avenue',
+    town = 'Peterbrugh'
+)
+
+r = conn.execute(ins)
+print(r.inserted_primary_key)
+
+ins = insert(customers)
+
+r = conn.execute(ins,
+    first_name = "Tim",
+    last_name = "Snyder",
+    username = "timsnyder",
+    email = "timsnyder@mail.com",
+    address = '1611 Sundown Lane',
+    town = 'Langdale'
+)
+print(r.inserted_primary_key)
