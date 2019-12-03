@@ -787,3 +787,88 @@ print(s)
 rs = conn.execute(s)
 rs.keys()
 rs.fetchall()
+
+s = select([items.c.id, items.c.name]).select_from(customers.join(orders).join(order_lines).join(items)).where(
+        and_(
+            customers.c.first_name == 'John',
+            customers.c.last_name == 'Green',
+            orders.c.id == 1
+        )
+)
+
+rs = conn.execute(s)
+rs.keys()
+rs.fetchall()
+
+#Raw queries
+
+
+from sqlalchemy.sql import text
+
+s = text(
+"""
+SELECT
+    orders.id as "Order ID", orders.date_placed, items.id, items.name
+FROM
+    customers
+INNER JOIN orders ON customers.id = orders.customer_id
+INNER JOIN order_lines ON order_lines.order_id = orders.id
+INNER JOIN items ON items.id= order_lines.item_id
+where customers.first_name = :first_name and customers.last_name = :last_name
+"""
+)
+
+print(s)
+rs = conn.execute(s, first_name="John", last_name='Green')
+rs.fetchall()
+
+s = select([items]).where(
+    text("items.name like 'Wa%'")
+).order_by(text("items.id desc"))
+
+print(s)
+rs = conn.execute(s)
+rs.fetchall()
+
+rs = conn.execute("select * from  orders;")
+rs.fetchall()
+
+#Transactions
+from sqlalchemy.exc import IntegrityError
+
+
+def dispatch_order(order_id):
+
+    # check whether order_id is valid or not
+    r = conn.execute(select([func.count("*")]).where(orders.c.id == order_id))
+    if not r.scalar():
+        raise ValueError("Invalid order id: {}".format(order_id))
+
+    # fetch items in the order
+    s = select([order_lines.c.item_id, order_lines.c.quantity]).where(
+        order_lines.c.order_id == order_id
+    )
+
+    rs = conn.execute(s)
+    ordered_items_list = rs.fetchall()
+
+    # start transaction
+    t = conn.begin()
+
+    try:
+        for i in ordered_items_list:
+            u = update(items).where(
+                items.c.id == i.item_id
+            ).values(quantity = items.c.quantity - i.quantity)
+
+            rs = conn.execute(u)
+
+        u = update(orders).where(orders.c.id == order_id).values(date_shipped=datetime.now())
+        rs = conn.execute(u)
+        t.commit()
+        print("Transaction completed.")
+
+    except IntegrityError as e:
+        print(e)
+        t.rollback()
+        print("Transaction failed.")
