@@ -269,3 +269,24 @@ r = conn.execute(s)
 print(r.rowcount)
 
 print(r.keys())
+
+r.scalar()
+
+r = conn.execute(s)
+row = r.fetchone()
+row
+type(row)
+row['id'], row['first_name']
+row[0], row[1]
+row[customers.c.id], row[customers.c.first_name]
+print(row.id, row.first_name)
+
+
+s = select([items]).where(
+    items.c.cost_price > 20
+)
+
+str(s)
+r = conn.execute(s)
+r.fetchall()
+
