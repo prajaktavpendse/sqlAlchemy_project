@@ -60,4 +60,7 @@ ins = customers.insert().values(
     town = 'Norfolk'
 )
 
-str(ins)
+print(str(ins))
+
+print(ins.compile().params)
+
