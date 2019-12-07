@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, MetaData, Table, Integer, String,Column, D
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
 from datetime import datetime
 
 engine = create_engine("sqlite:///sqlalchemy_tuts.db")
@@ -28,9 +27,7 @@ class Item(Base):
     name = Column(String(200), nullable=False)
     cost_price = Column(Numeric(10, 2), nullable=False)
     selling_price = Column(Numeric(10, 2), nullable=False)
-
-
-#     orders = relationship("Order", backref='customer')
+    orders = relationship("Order", backref='customer')
 
 
 class Order(Base):

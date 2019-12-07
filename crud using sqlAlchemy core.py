@@ -395,7 +395,7 @@ s = select([items]).where(
 )
 print(s)
 conn.execute(s).fetchall()
-
+#print((type(exception), exception, tb= tbl1, cause=cause))
 #Using NOT BETWEEN operation
 
 s = select([items]).where(
@@ -498,59 +498,6 @@ rs = conn.execute(s)
 rs.keys()
 rs.fetchall()
 
-#Accessing built-in functions
-
-
-from sqlalchemy.sql import func
-
-c = [
-
-    ##  date/time functions  ##
-
-    func.timeofday(),
-    func.localtime(),
-    func.current_timestamp(),
-    func.date_part("month", func.now()),
-    func.now(),
-
-    ##  mathematical functions  ##
-
-    func.pow(4, 2),
-    func.sqrt(441),
-    func.pi(),
-    func.floor(func.pi()),
-    func.ceil(func.pi()),
-
-    ##  string functions  ##
-
-    func.lower("ABC"),
-    func.upper("abc"),
-    func.length("abc"),
-    func.trim("  ab c  "),
-    func.chr(65),
-]
-
-s = select(c)
-rs = conn.execute(s)
-rs.keys()
-rs.fetchall()
-
-from sqlalchemy.sql import func
-
-c = [
-    func.sum(items.c.quantity),
-    func.avg(items.c.quantity),
-    func.max(items.c.quantity),
-    func.min(items.c.quantity),
-    func.count(customers.c.id),
-]
-
-s = select(c)
-
-print(s)
-rs = conn.execute(s)
-rs.keys()
-rs.fetchall()
 
 #Grouping results
 
