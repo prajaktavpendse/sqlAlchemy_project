@@ -94,4 +94,52 @@ i8 = Item(name='Water Bottle', cost_price=20.89, selling_price=25, quantity=50)
 
 session.add_all([i1, i2, i3, i4, i5, i6, i7, i8])
 session.commit()
+# Creating orders
+
+
+o1 = Order(customer=c1)
+o2 = Order(customer=c1)
+
+line_item1 = OrderLine(order=o1, item=i1, quantity=3)
+line_item2 = OrderLine(order=o1, item=i2, quantity=2)
+line_item3 = OrderLine(order=o2, item=i1, quantity=1)
+line_item3 = OrderLine(order=o2, item=i2, quantity=4)
+
+session.add_all([o1, o2])
+
+session.new
+session.commit()
+
+o3 = Order(customer=c1)
+orderline1 = OrderLine(item=i1, quantity=5)
+orderline2 = OrderLine(item=i2, quantity=10)
+
+o3.order_lines.append(orderline1)
+o3.order_lines.append(orderline2)
+
+session.add_all([o3])
+
+session.commit()
+
+c1.orders
+o1.customer
+
+# To view orders of  c1 customer
+
+c1.orders[0].order_lines, c1.orders[1].order_lines
+
+for ol in c1.orders[0].order_lines:
+    ol.id, ol.item, ol.quantity
+
+print('-------')
+
+for ol in c1.orders[1].order_lines:
+    ol.id, ol.item, ol.quantity
+
+# Using all() method
+
+session.query(Customer).all()
+
+print(session.query(Customer))
+
 
