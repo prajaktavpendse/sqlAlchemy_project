@@ -199,4 +199,28 @@ session.query(Customer).filter(and_(
 )).all()
 
 
+#IS NULL
+session.query(Order).filter(Order.date_shipped == None).all()
+
+#Is NOT NULL
+session.query(Order).filter(Order.date_shipped != None).all()
+
+#IN
+session.query(Customer).filter(Customer.first_name.in_(['Toby', 'Sarah'])).all()
+
+#NOT IN
+session.query(Customer).filter(Customer.first_name.notin_(['Toby', 'Sarah'])).all()
+
+#BETWEEN
+session.query(Item).filter(Item.cost_price.between(10, 50)).all()
+
+#NOT BETWEEN
+session.query(Item).filter(not_(Item.cost_price.between(10, 50))).all()
+
+
+
+
+
+
+
 
