@@ -142,4 +142,35 @@ session.query(Customer).all()
 
 print(session.query(Customer))
 
+# Using for loop for query objects
 
+q = session.query(Customer)
+
+for c in q:
+    print(c.id, c.first_name)
+
+session.query(Customer.id, Customer.first_name).all()
+
+# Using count() methods
+
+session.query(Customer).count()  # get the total number of records in the customers table
+session.query(Item).count()  # get the total number of records in the items table
+session.query(Order).count()  # get the total number of records in the orders table
+
+# Using first() method
+session.query(Customer).first()
+session.query(Item).first()
+session.query(Order).first()
+
+# Using get() method
+
+session.query(Customer).get(1)
+session.query(Item).get(1)
+session.query(Order).get(100)
+
+# Using filter() method
+session.query(Customer).filter(Customer.first_name == 'John').all()
+print(session.query(Customer).filter(Customer.first_name == 'John'))
+session.query(Customer).filter(Customer.id <= 5, Customer.town == "Norfolk").all()
+
+print(session.query(Customer).filter(Customer.id <= 5, Customer.town.like("Nor%"))
