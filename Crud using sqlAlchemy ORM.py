@@ -217,6 +217,55 @@ session.query(Item).filter(Item.cost_price.between(10, 50)).all()
 #NOT BETWEEN
 session.query(Item).filter(not_(Item.cost_price.between(10, 50))).all()
 
+#LIKE
+session.query(Item).filter(Item.name.like("%r")).all()
+
+#ilike
+session.query(Item).filter(Item.name.ilike("w%")).all()
+
+#NOT LIKE
+session.query(Item).filter(not_(Item.name.like("W%"))).all()
+
+#LIMIT METHOD
+
+session.query(Customer).limit(2).all()
+session.query(Customer).filter(Customer.address.ilike("%avenue")).limit(2).all()
+
+#offset() method
+session.query(Customer).limit(2).offset(2).all()
+print(session.query(Customer).limit(2).offset(2))
+
+#order_by() method
+
+session.query(Item).filter(Item.name.ilike("wa%")).all()
+session.query(Item).filter(Item.name.ilike("wa%")).order_by(Item.cost_price).all()
+
+#desc() func
+
+
+from sqlalchemy import desc
+session.query(Item).filter(Item.name.ilike("wa%")).order_by(desc(Item.cost_price)).all()
+
+#join() method
+session.query(Table1).join(Table2).join(Table3).join(Table4).all()
+
+session.query(
+    Customer.first_name,
+    Item.name,
+    Item.selling_price,
+    OrderLine.quantity
+).join(Order).join(OrderLine).join(Item).filter(
+    Customer.first_name == 'John',
+    Customer.last_name == 'Green',
+    Order.id == 1,
+).all()
+
+#outerjoin() method
+
+session.query(
+    Customer.first_name,
+    Order.id,
+).outerjoin(Order).all()
 
 
 
