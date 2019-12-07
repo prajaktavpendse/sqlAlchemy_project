@@ -296,6 +296,94 @@ session.query(
     func.count(Customer.town)
 ).all()
 
+# Casting
+from sqlalchemy import cast, Date, distinct, union
+
+session.query(
+    cast(func.pi(), Integer),
+    cast(func.pi(), Numeric(10, 2)),
+    cast("2010-12-01", DateTime),
+    cast("2010-12-01", Date),
+).all()
+
+# Unions
+s1 = session.query(Item.id, Item.name).filter(Item.name.like("Wa%"))
+s2 = session.query(Item.id, Item.name).filter(Item.name.like("%e%"))
+s1.union(s2).all()
+
+s1.union_all(s2).all()
+
+# Updating data
+i = session.query(Item).get(8)
+i.selling_price = 25.91
+session.add(i)
+session.commit()
+
+# update quantity of all quantity of items to 60 whose name starts with 'W'
+
+session.query(Item).filter(
+    Item.name.ilike("W%")
+).update({"quantity": 60}, synchronize_session='fetch')
+session.commit()
+
+# Deleting data
+i = session.query(Item).filter(Item.name == 'Monitor').one()
+i
+session.delete(i)
+session.commit()
+
+session.query(Item).filter(
+    Item.name.ilike("W%")
+).delete(synchronize_session='fetch')
+session.commit()
+
+# Raw queries
+from sqlalchemy import text
+
+session.query(Customer).filter(text("first_name = 'John'")).all()
+
+session.query(Customer).filter(text("town like 'Nor%'")).all()
+
+session.query(Customer).filter(text("town like 'Nor%'")).order_by(text("first_name, id desc")).all()
+
+# Transactions
+
+from sqlalchemy import update
+from sqlalchemy.exc import IntegrityError
+from datetime import datetime
+
+
+def dispatch_order(order_id):
+    # check whether order_id is valid or not
+    order = session.query(Order).get(order_id)
+
+    if not order:
+        raise ValueError("Invalid order id: {}.".format(order_id))
+
+    if order.date_shipped:
+        print("Order already shipped.")
+        return
+
+    try:
+        for i in order.order_lines:
+            i.item.quantity = i.item.quantity - i.quantity
+
+        order.date_shipped = datetime.now()
+        session.commit()
+        print("Transaction completed.")
+
+    except IntegrityError as e:
+        print(e)
+        print("Rolling back ...")
+        session.rollback()
+        print("Transaction failed.")
+
+
+dispatch_order(1)
+dispatch_order(2)
+
+
+
 
 
 
