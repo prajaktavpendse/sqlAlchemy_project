@@ -267,6 +267,34 @@ session.query(
     Order.id,
 ).outerjoin(Order).all()
 
+# group_by() method
+
+from sqlalchemy import func
+
+session.query(func.count(Customer.id)).join(Order).filter(
+    Customer.first_name == 'John',
+    Customer.last_name == 'Green',
+).group_by(Customer.id).scalar()
+
+# having() method
+
+# find the number of customers lives in each town
+
+session.query(
+    func.count("*").label('town_count'),
+    Customer.town
+).group_by(Customer.town).having(func.count("*") > 2).all()
+
+# Dealing with duplicates
+from sqlalchemy import distinct
+
+session.query(Customer.town).filter(Customer.id < 10).all()
+session.query(Customer.town).filter(Customer.id < 10).distinct().all()
+
+session.query(
+    func.count(distinct(Customer.town)),
+    func.count(Customer.town)
+).all()
 
 
 
