@@ -31,3 +31,12 @@ c1, c2
 
 c1.first_name, c1.last_name
 c2.first_name, c2.last_name
+
+session.add(c1)
+session.add(c2)
+
+c1.id, c2.id
+
+session.add_all([c1, c2])
+
+session.new
